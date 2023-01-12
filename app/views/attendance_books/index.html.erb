@@ -1,0 +1,28 @@
+<h1>園児出席一覧カレンダー</h1>
+<h5>カレンダーに表記されているお子さんのクラス名をクリックしてください。出席状況確認できます。</h5>
+<% Team.all.each do |team| %>
+  <% unless @done_attendance_kids & team.kids.pluck(:id) == team.kids.pluck(:id) %>
+    <%= link_to "・#{team.name}", new_attendance_book_path(team_id: team) %>
+  <% end %>
+<% end %>
+  <hr>
+  <%= @day_date&.to_time&.strftime("%Y年%m月%d日") %>
+  <%= @team_name %>
+  <% @attendancebooks_teams&.each do |attendancebook| %>
+    <%= Kid.find_by(id: attendancebook.kid_id).name %>
+    <%= attendancebook.presence_or_absence %>
+  <% end %>
+  <hr>
+  <%= month_calendar events: @attendancebooks do |date, attendancebooks| %>
+  <%= date.day %>
+  <% class_names = [] %>
+  <% attendancebooks.each do |attendancebook| %>
+    <% unless class_names.include?(Kid.find(attendancebook.kid_id).team.name) %>
+      <% class_names << Kid.find(attendancebook.kid_id).team.name %>
+    <% end %>
+  <% end %>
+
+  <% class_names.each do |class_name| %>
+    <%= link_to "#{class_name}",attendance_books_path(class_name: "#{class_name}", day_date: "#{date}") %>
+  <% end %>
+<% end %>

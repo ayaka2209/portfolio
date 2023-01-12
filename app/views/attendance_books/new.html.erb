@@ -1,0 +1,10 @@
+<h4>クラス名：<%= @team.name %></h4>
+
+<%= form_with(model: @attendancebook) do |f| %>
+  <% @team.kids.each_with_index do |kid, i| %>
+    <h5><%= "園児#{i + 1}" %> <%= kid.name %></h5>
+    <%= f.select "#{kid.id}_attendance", [["出席", 1], ["欠席", 0]], include_blank: "選択して下さい", id: i %>
+  <% end %>
+    <% f.hidden_field :team_id, value: @team.id %>
+    <%= f.submit %>
+<% end %>
